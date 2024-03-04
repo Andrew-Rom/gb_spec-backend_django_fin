@@ -174,3 +174,7 @@ MESSAGE_TAGS = {
 }
 
 AUTH_USER_MODEL = "recipebookapp.CustomUser"  # для кастомной модели пользователя
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+)

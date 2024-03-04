@@ -18,20 +18,26 @@ class RecipeForm(forms.Form):
     image = forms.ImageField(required=False, label="Изображение блюда")
 
 
-class SignInForm(AuthenticationForm):
-    username = forms.CharField(min_length=2,
-                               max_length=50,
-                               widget=forms.TextInput(attrs={'placeholder': 'Имя'}))
-    password = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Пароль'}))
+class SignInForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Email'}))
+    password = forms.CharField(
+        strip=False,
+        widget=forms.PasswordInput(attrs={'autocomplete': 'current-password',
+                                          'placeholder': 'Пароль'}),
+    )
 
 
 class SignUpForm(UserCreationForm):
-    username = forms.CharField(min_length=2,
-                               max_length=50,
-                               widget=forms.TextInput(attrs={'placeholder': 'Имя'}))
-    email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Email'}))
-    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Пароль'}))
-    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'placeholder': 'Повторите пароль'}))
+    class Meta:
+        model = CustomUser
+        fields = ('username', 'email', 'password1', 'password2')
+
+    def __init__(self, *args, **kwargs):
+        super(SignUpForm, self).__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs['placeholder'] = 'Имя'
+        self.fields['email'].widget.attrs['placeholder'] = 'Email'
+        self.fields['password1'].widget.attrs['placeholder'] = 'Пароль'
+        self.fields['password2'].widget.attrs['placeholder'] = 'Повторите пароль'
 
     def clean_email(self):
         email = self.cleaned_data.get('email')

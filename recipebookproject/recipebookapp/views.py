@@ -23,30 +23,31 @@ def log_this(f):
 
 @log_this
 def index(request):
+    print(request.user)
     return render(request, "recipebookapp/index.html")
 
 
+@log_this
 def user(request):
     if request.method == 'POST':
         if 'register' in request.POST:
             reg_form = SignUpForm(request.POST)
             if reg_form.is_valid():
                 reg_form.save()
-                username = reg_form.cleaned_data['username']
                 email = reg_form.cleaned_data['email']
                 password = reg_form.cleaned_data['password1']
-                user = authenticate(request, username=username, email=email, password=password)
+                user = authenticate(request, email=email, password=password)
                 login(request, user)
-                print(email)
                 return redirect('/')
             else:
                 messages.error(request, 'Форма регистрации заполнена неверно')
         elif 'login' in request.POST:
-            login_form = SignInForm(request, data=request.POST)
+            login_form = SignInForm(request.POST)
             if login_form.is_valid():
-                user = login_form.get_user()
-                login(request, user)
-                return redirect('/')
+                if user := authenticate(request, **login_form.cleaned_data):
+                    login(request, user)
+                    return redirect('/')
+                messages.error(request, 'Ошибка авторизации')
             else:
                 messages.error(request, 'Введены неверные данные')
 
@@ -140,16 +141,3 @@ def user_logout(request):
 #     }
 #     return render(request, 'recipe_edit.html', context)
 
-def user_register(request):
-    # реализация регистрации пользователя
-    pass
-
-
-def user_login(request):
-    # реализация входа пользователя
-    pass
-
-
-def user_logout(request):
-    # реализация выхода пользователя
-    pass
