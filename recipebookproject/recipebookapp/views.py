@@ -4,10 +4,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 import logging
 
-from .forms import SignInForm, SignUpForm
+from .forms import SignInForm, SignUpForm, RecipeForm
+from .models import Recipe
 
-# from .models import Recipe
-# from .forms import RecipeForm
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +22,6 @@ def log_this(f):
 
 @log_this
 def index(request):
-    print(request.user)
     return render(request, "recipebookapp/index.html")
 
 
@@ -38,7 +36,7 @@ def user(request):
                 password = reg_form.cleaned_data['password1']
                 user = authenticate(request, email=email, password=password)
                 login(request, user)
-                return redirect('/')
+                return redirect('/cooker')
             else:
                 messages.error(request, 'Форма регистрации заполнена неверно')
         elif 'login' in request.POST:
@@ -46,10 +44,10 @@ def user(request):
             if login_form.is_valid():
                 if user := authenticate(request, **login_form.cleaned_data):
                     login(request, user)
-                    return redirect('/')
+                    return redirect('/cooker')
                 messages.error(request, 'Ошибка авторизации')
             else:
-                messages.error(request, 'Введены неверные данные')
+                messages.error(request, 'Форма авторизации заполнена неверно')
 
     reg_form = SignUpForm()
     login_form = SignInForm()
@@ -61,43 +59,78 @@ def user(request):
     return render(request, 'recipebookapp/user.html', context)
 
 
-# def user_register(request):
-#     if request.method == 'POST':
-#         form = SignUpForm(request.POST)
-#         if form.is_valid():
-#             user = form.save()
-#             login(request, user)
-#             return redirect('/')
-#     else:
-#         form = SignUpForm()
-#     context = {
-#         'form': form
-#     }
-#     return render(request, 'user.html', context)
-#
-#
-# def user_login(request):
-#     if request.method == 'POST':
-#         form = SignInForm(request.POST)
-#         if form.is_valid():
-#             username = form.cleaned_data['username']
-#             password = form.cleaned_data['password']
-#             user = authenticate(request, username=username, password=password)
-#             if user is not None:
-#                 login(request, user)
-#                 return redirect('/')
-#     else:
-#         form = SignInForm()
-#     context = {
-#         'form': form
-#     }
-#     return render(request, 'user.html', context)
-
-
 @login_required
 def user_logout(request):
     logout(request)
     return redirect('/')
+
+
+@log_this
+@login_required
+def cooker(request):
+    return render(request, "recipebookapp/cooker.html")
+
+
+@log_this
+@login_required
+def recipe_add(request):
+    is_completed = False
+    if request.method == 'POST':
+        form = RecipeForm(request.POST, request.FILES)
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            description = form.cleaned_data['description']
+            cooking_steps = form.cleaned_data['cooking_steps']
+            cooking_time = form.cleaned_data['cooking_time']
+            image = form.cleaned_data['image']
+            author = request.user
+            recipe = Recipe(title=title,
+                            description=description,
+                            cooking_steps=cooking_steps,
+                            cooking_time=cooking_time,
+                            image=image,
+                            author=author)
+            recipe.save()
+            is_completed = True
+    else:
+        is_completed = False
+        form = RecipeForm()
+    return render(request, 'recipebookapp/recipe_add.html',
+                  {'form': form, 'is_completed': is_completed})
+
+
+def recipe_edit(request, recipe_id):
+    is_completed = False
+    recipe = Recipe.objects.filter(pk=recipe_id).first()
+    recipe_img = recipe.image
+    if request.method == 'POST':
+        form = RecipeForm(request.POST, request.FILES)
+        if form.is_valid():
+            recipe.title = form.cleaned_data['title']
+            recipe.description = form.cleaned_data['description']
+            recipe.cooking_steps = form.cleaned_data['cooking_steps']
+            recipe.cooking_time = form.cleaned_data['cooking_time']
+            if form.cleaned_data['image'] is not None:
+                recipe.image = form.cleaned_data['image']
+            recipe.save()
+            is_completed = True
+    else:
+        is_completed = False
+        if recipe:
+            data = {'title': recipe.title,
+                    'description': recipe.description,
+                    'cooking_steps': recipe.cooking_steps,
+                    'cooking_time': recipe.cooking_time}
+            if recipe.image is not None:
+                recipe_img = recipe.image
+            form = RecipeForm(data)
+        else:
+            form = RecipeForm()
+    return render(request, 'recipebookapp/recipe_edit.html',
+                  {'form': form,
+                   'is_completed': is_completed,
+                   'recipe_img': recipe_img,
+                   'recipe': recipe})
 
 
 # def home(request):
@@ -114,30 +147,3 @@ def user_logout(request):
 #     }
 #     return render(request, 'recipe_detail.html', context)
 #
-# def recipe_add(request):
-#     if request.method == 'POST':
-#         form = RecipeForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('/')
-#     else:
-#         form = RecipeForm()
-#     context = {
-#         'form': form
-#     }
-#     return render(request, 'recipe_add.html', context)
-#
-# def recipe_edit(request, recipe_id):
-#     recipe = Recipe.objects.get(id=recipe_id)
-#     if request.method == 'POST':
-#         form = RecipeForm(request.POST, request.FILES, instance=recipe)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('/')
-#     else:
-#         form = RecipeForm(instance=recipe)
-#     context = {
-#         'form': form
-#     }
-#     return render(request, 'recipe_edit.html', context)
-

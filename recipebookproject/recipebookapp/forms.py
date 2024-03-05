@@ -1,21 +1,36 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm
 
-from recipebookapp.models import CustomUser
+from recipebookapp.models import CustomUser, Category, Recipe
 
 
-class RecipeForm(forms.Form):
-    title = forms.CharField(max_length=500,
+class RecipeForm(forms.ModelForm):
+    title = forms.CharField(max_length=100,
                             label="Наименование блюда",
                             widget=forms.TextInput(attrs={'class': 'recipe-form__title'}))
-    description = forms.CharField(max_length=1000,
+    description = forms.CharField(max_length=250,
                                   label="Описание блюда",
                                   widget=forms.Textarea(attrs={'class': 'recipe-form__description'}))
     cooking_steps = forms.CharField(max_length=10000,
                                     label="Как приготовить",
                                     widget=forms.Textarea(attrs={'class': 'recipe-form__cooking'}))
-    cooking_time = forms.IntegerField(min_value=1, label="Время приготовления")
+    cooking_time = forms.TimeField(label="Время приготовления",
+                                   help_text='Укажите время приготовления блюда',
+                                   widget=forms.TimeInput(format='%H:%M', attrs={'type': 'time'}))
     image = forms.ImageField(required=False, label="Изображение блюда")
+
+    class Meta:
+        model = Recipe
+        fields = ('title', 'description', 'cooking_steps', 'cooking_time', 'image', 'category')
+
+    def __init__(self, *args, **kwargs):
+        super(RecipeForm, self).__init__(*args, **kwargs)
+        self.fields['category'].widget = forms.Select()
+        self.fields['category'].queryset = Category.objects.all()
+        self.fields['category'].empty_label = 'Выберите категорию'
+        self.fields['category'].label = 'Категория блюда'
+        self.fields['category'].required = False
+
 
 
 class SignInForm(forms.Form):

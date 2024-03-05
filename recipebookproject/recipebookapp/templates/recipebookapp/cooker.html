@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Сайт рецептов - личный кабинет
+{% endblock %}
+
+{% block header %}
+Личный кабинет
+{% endblock %}
+
+{% block user %}
+
+{% if user.is_authenticated %}
+<li>
+    <a class="main_menu__link" href="/logout/" data-title="Покинуть кухню"><img style="width: 35px;"
+                                                                                 src="{% static 'img/logout_icon.png' %}"></a>
+</li>
+{% endif %}
+
+{% endblock %}
+
+{% block content %}
+<p>Добро пожаловать в Ваш личный кабинет на сайте рецептов!</p>
+<p>Здесь вы можете сохранять и изменять свои рецепты.
+    Надеемся, что наш сайт станет вашим надежным помощником в кулинарии!</p>
+
+<a href="/recipe_add/">Добавить рецепт</a>
+
+{% endblock %}

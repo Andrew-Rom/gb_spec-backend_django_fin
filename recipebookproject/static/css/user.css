@@ -4,14 +4,12 @@
     box-sizing: border-box;
 }
 
-body {
-    font-family: 'Montserrat', sans-serif;
-    background: #f6f5f7;
+.content {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100%;
     margin: -20px 0 50px;
 		margin-top: 20px;
 }
@@ -67,6 +65,7 @@ a {
 }
 
 button {
+    cursor: pointer;
     border-radius: 20px;
     border: 1px solid #ff4b2b;
     background: #ff445c;
@@ -76,7 +75,11 @@ button {
     padding: 12px 45px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    transition: transform 80ms ease-in;
+    transition: all 80ms ease-in;
+}
+
+button:hover {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, .2), 0 5px 5px rgba(0, 0, 0, .2);
 }
 
 button:active {

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}
 Сайт рецептов
@@ -8,8 +9,34 @@
 Проект “Сайт рецептов” на Django
 {% endblock %}
 
+{% block user %}
+
+{% if not user.is_authenticated %}
+<li>
+    <a class="main_menu__link" href="/user/" data-title="Доступ на кухню"><img style="width: 35px;"
+                                                                               src="{% static 'img/cooker_unknown.png' %}"></a>
+</li>
+{% endif %}
+
+{% if user.is_authenticated %}
+<li>
+    <a class="main_menu__link" href="/cooker/" data-title="Доступ на кухню"><img style="width: 35px;"
+                                                                               src="{% static 'img/cooker_wellknown.png' %}"></a>
+</li>
+<li>
+    <a class="main_menu__link" href="/logout/" data-title="Покинуть кухню"><img style="width: 35px;"
+                                                                                 src="{% static 'img/logout_icon.png' %}"></a>
+</li>
+{% endif %}
+
+
+{% endblock %}
+
 {% block content %}
-<p>Используя фреймворк Django создайте сайт, на котором пользователи смогут добавлять свои рецепты блюд и просматривать
-    рецепты других пользователей. Готовый проект необходимо сдать в виде ссылки на рабочий сайт в сети интернет и
-    репозитория с исходным кодом проекта.</p>
+<p>Приветствуем вас на сайте рецептов!
+    Мы рады, что вы выбрали именно наш сайт для поиска новых и вкусных рецептов.
+    У нас вы найдете множество идей для приготовления блюд на любой вкус и для любого повода.
+    В нашем каталоге вы найдете рецепты первых и вторых блюд, закусок, салатов, десертов и многое другое.
+    Мы уверены, что вы найдете здесь то, что ищете.
+    Приятного аппетита и удачных экспериментов на кухне!</p>
 {% endblock %}
