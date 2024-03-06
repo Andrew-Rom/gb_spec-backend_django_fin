@@ -38,7 +38,7 @@ def index(request):
     if count == 1:
         recipes = [Recipe.objects.all()[0]]
         return render(request, "recipebookapp/index.html", {'recipes': recipes})
-    if 2 < count < number_of_cards:
+    if 1 < count < number_of_cards:
         number_of_cards = count
     while len(recipes) < number_of_cards:
         recipe = get_random_recipe()
