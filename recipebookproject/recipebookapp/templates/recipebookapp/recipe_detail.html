@@ -58,12 +58,13 @@
                 <p>Тип блюда: {{ recipe.category }}</p>
                 {% endif %}
                 {% if recipe.author %}
-                <div class="recipe_author">{{ recipe.author }}</div>
+                <div class="recipe_author">Автор: {{ recipe.author }}</div>
                 {% endif %}
             </div>
             <div class="recipe_buttons">
-                {% if user.is_authenticated %}
+                {% if user == recipe.author %}
                 <a class="recipe_btn" href="/recipe_edit/{{ recipe.id }}">Изменить</a>
+                <a class="recipe_btn" href="/recipe_delete/{{ recipe.id }}">Удалить</a>
                 {% endif %}
                 <a class="recipe_btn" href="/">Назад</a>
             </div>

@@ -82,7 +82,8 @@ def user_logout(request):
 @log_this
 @login_required
 def cooker(request):
-    return render(request, "recipebookapp/cooker.html")
+    recipes = Recipe.objects.filter(is_visible=True, author=request.user)
+    return render(request, "recipebookapp/cooker.html", {'recipes': recipes})
 
 
 @log_this
@@ -153,6 +154,18 @@ def recipe_edit(request, recipe_id):
                    'is_completed': is_completed,
                    'recipe_img': recipe_img,
                    'recipe': recipe})
+
+
+@log_this
+@login_required
+def recipe_delete(request, recipe_id):
+    recipe = Recipe.objects.filter(pk=recipe_id).first()
+    if request.user != recipe.author:
+        return redirect('/')
+    if recipe:
+        recipe.is_visible = False
+        recipe.save()
+    return redirect('/cooker')
 
 
 @log_this
