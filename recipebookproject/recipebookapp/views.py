@@ -72,6 +72,7 @@ def user(request):
     return render(request, 'recipebookapp/user.html', context)
 
 
+@log_this
 @login_required
 def user_logout(request):
     logout(request)
@@ -120,6 +121,8 @@ def recipe_edit(request, recipe_id):
     is_completed = False
     recipe = Recipe.objects.filter(pk=recipe_id).first()
     recipe_img = recipe.image
+    if request.user != recipe.author:
+        return redirect('/')
     if request.method == 'POST':
         form = RecipeForm(request.POST, request.FILES)
         if form.is_valid():
@@ -151,17 +154,21 @@ def recipe_edit(request, recipe_id):
                    'recipe_img': recipe_img,
                    'recipe': recipe})
 
-# def home(request):
-#     recipes = Recipe.objects.order_by('?')[:5]
-#     context = {
-#         'recipes': recipes
-#     }
-#     return render(request, 'home.html', context)
-#
-# def recipe_detail(request, recipe_id):
-#     recipe = Recipe.objects.get(id=recipe_id)
-#     context = {
-#         'recipe': recipe
-#     }
-#     return render(request, 'recipe_detail.html', context)
-#
+
+@log_this
+def recipe_detail(request, recipe_id):
+    recipe = Recipe.objects.get(id=recipe_id)
+    context = {
+        'recipe': recipe
+    }
+    return render(request, 'recipebookapp/recipe_detail.html', context)
+
+
+@log_this
+def handler404(request, exception):
+    return render(request, '404.html', status=404)
+
+
+@log_this
+def handler500(request):
+    return render(request, '500.html', status=500)
