@@ -30,8 +30,14 @@ def get_random_recipe():
 
 @log_this
 def index(request):
+    number_of_cards = 5
     recipes = []
-    while len(recipes) < 5:
+    count = Recipe.objects.filter(is_visible=True).count()
+    if count == 0:
+        return render(request, "recipebookapp/index.html")
+    if 1 < count < number_of_cards:
+        number_of_cards = count
+    while len(recipes) < number_of_cards:
         recipe = get_random_recipe()
         if recipe not in recipes:
             recipes.append(recipe)
