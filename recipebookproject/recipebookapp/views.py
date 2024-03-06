@@ -1,3 +1,5 @@
+from random import randint
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -6,7 +8,6 @@ import logging
 
 from .forms import SignInForm, SignUpForm, RecipeForm
 from .models import Recipe
-
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +21,21 @@ def log_this(f):
     return wrapper
 
 
+def get_random_recipe():
+    count = Recipe.objects.filter(is_visible=True).count()
+    random_index = randint(0, count - 1)
+    random_recipe = Recipe.objects.all()[random_index]
+    return random_recipe
+
+
 @log_this
 def index(request):
-    return render(request, "recipebookapp/index.html")
+    recipes = []
+    while len(recipes) < 5:
+        recipe = get_random_recipe()
+        if recipe not in recipes:
+            recipes.append(recipe)
+    return render(request, "recipebookapp/index.html", {'recipes': recipes})
 
 
 @log_this
@@ -84,12 +97,14 @@ def recipe_add(request):
             cooking_time = form.cleaned_data['cooking_time']
             image = form.cleaned_data['image']
             author = request.user
+            category = form.cleaned_data['category']
             recipe = Recipe(title=title,
                             description=description,
                             cooking_steps=cooking_steps,
                             cooking_time=cooking_time,
                             image=image,
-                            author=author)
+                            author=author,
+                            category=category)
             recipe.save()
             is_completed = True
     else:
@@ -99,6 +114,8 @@ def recipe_add(request):
                   {'form': form, 'is_completed': is_completed})
 
 
+@log_this
+@login_required
 def recipe_edit(request, recipe_id):
     is_completed = False
     recipe = Recipe.objects.filter(pk=recipe_id).first()
@@ -110,6 +127,7 @@ def recipe_edit(request, recipe_id):
             recipe.description = form.cleaned_data['description']
             recipe.cooking_steps = form.cleaned_data['cooking_steps']
             recipe.cooking_time = form.cleaned_data['cooking_time']
+            recipe.category = form.cleaned_data['category']
             if form.cleaned_data['image'] is not None:
                 recipe.image = form.cleaned_data['image']
             recipe.save()
@@ -120,7 +138,8 @@ def recipe_edit(request, recipe_id):
             data = {'title': recipe.title,
                     'description': recipe.description,
                     'cooking_steps': recipe.cooking_steps,
-                    'cooking_time': recipe.cooking_time}
+                    'cooking_time': recipe.cooking_time,
+                    'category': recipe.category}
             if recipe.image is not None:
                 recipe_img = recipe.image
             form = RecipeForm(data)
@@ -131,7 +150,6 @@ def recipe_edit(request, recipe_id):
                    'is_completed': is_completed,
                    'recipe_img': recipe_img,
                    'recipe': recipe})
-
 
 # def home(request):
 #     recipes = Recipe.objects.order_by('?')[:5]

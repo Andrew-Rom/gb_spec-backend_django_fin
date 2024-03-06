@@ -26,7 +26,7 @@ class RecipeForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RecipeForm, self).__init__(*args, **kwargs)
         self.fields['category'].widget = forms.Select()
-        self.fields['category'].queryset = Category.objects.all()
+        self.fields['category'].queryset = Category.objects.only('title').all()
         self.fields['category'].empty_label = 'Выберите категорию'
         self.fields['category'].label = 'Категория блюда'
         self.fields['category'].required = False
