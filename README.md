@@ -88,6 +88,6 @@
 и отправить вашу реализацию в виде Pull Request. 
 Буду рад принять ваши предложения и улучшения.
 
-## Проект развернут: 
+## Проект развернут по адресу : 
 
-[по адресу andybook.pythonanywhere.com](https://andybook.pythonanywhere.com/)
+[andybook.pythonanywhere.com](https://andybook.pythonanywhere.com/)
