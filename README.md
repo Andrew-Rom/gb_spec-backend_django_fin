@@ -87,3 +87,7 @@
 вы можете создать новую ветку (`git checkout -b feature/new-feature`) 
 и отправить вашу реализацию в виде Pull Request. 
 Буду рад принять ваши предложения и улучшения.
+
+## Проект развернут: 
+
+[по адресу andybook.pythonanywhere.com](https://andybook.pythonanywhere.com/)
