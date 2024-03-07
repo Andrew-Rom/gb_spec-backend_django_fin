@@ -29,12 +29,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# DEBUG = True
-DEBUG = os.getenv('DEBUG')
+if os.environ.get("DEBUG") == "False":
+    DEBUG = False
+else:
+    DEBUG = True
+
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-ALLOWED_HOSTS = ALLOWED_HOSTS = [
+ALLOWED_HOSTS = [
     '192.168.1.10',
     '127.0.0.1',
     'andybook.pythonanywhere.com',
