@@ -103,3 +103,16 @@
     color: white;
     background-color: #ff445c;
 }
+
+@media (max-width: 480px) {
+    .recipes_container .recipe_box {
+        width: 220px;
+        border-radius: 15px;
+    }
+
+    .recipes_container .recipe_box .img-recipe_box__image {
+        width: 160px;
+        border-radius: 10px;
+    }
+
+}

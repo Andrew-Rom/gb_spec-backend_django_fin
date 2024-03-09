@@ -77,3 +77,16 @@
     color: white;
     background-color: #ff445c;
 }
+
+@media (max-width: 768px) {
+    .recipe_container {
+        flex-direction: column;
+    }
+
+    .recipe_left,
+    .recipe_right,
+    .recipe_info {
+        width: 100%;
+        align-items: center;
+    }
+}
