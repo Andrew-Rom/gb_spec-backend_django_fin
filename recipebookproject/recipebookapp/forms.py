@@ -32,7 +32,6 @@ class RecipeForm(forms.ModelForm):
         self.fields['category'].required = False
 
 
-
 class SignInForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Email'}))
     password = forms.CharField(
@@ -52,6 +51,8 @@ class SignUpForm(UserCreationForm):
         self.fields['username'].widget.attrs['placeholder'] = 'Имя'
         self.fields['email'].widget.attrs['placeholder'] = 'Email'
         self.fields['password1'].widget.attrs['placeholder'] = 'Пароль'
+        self.fields['password1'].widget.attrs[
+            'title'] = 'Минимум 8 символов. По одному из: заглавная и строчная буква, цифра и спецсимвол.'
         self.fields['password2'].widget.attrs['placeholder'] = 'Повторите пароль'
 
     def clean_email(self):
